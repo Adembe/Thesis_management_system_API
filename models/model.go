@@ -27,3 +27,20 @@ type Order struct {
 	UserId      uint      `json:"user_id"`
 	User        User      `gorm:"foreignKey:UserId"`
 }
+
+type Thesis struct {
+	ID          uint           `json:"id" gorm:"primaryKey"`
+	ThesisType	uint		   `json:"thesis_type"`
+	ThesisId	uint		   `json:"thesis_id"`
+	TeacherId	uint		   `json:"teacher_id"`
+	User 		User 		   `gorm:"foreignKey:TeacherId"`
+	TeacherName string         `json:"teacher_name"`
+	MglName     string         `json:"user_name"`
+	EngName		string		   `json:"user_type"`
+	Content     string         `json:"content"`
+	Requirement string         `json:"requirement"`
+	CreatedAt   time.Time      
+	UpdatedAt   time.Time      
+}
+
+
