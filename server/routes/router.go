@@ -21,11 +21,24 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 			users.DELETE("/:id", controllers.DeleteUser)
 			users.PUT("/", controllers.UpdateUser)
 		}
-		order := main.Group("order")
+		thesis :=  main.Group("thesis")
 		{
-			order.POST("/", controllers.CreateOrder)
-			order.GET("/", controllers.GetAllOrders)
-			order.DELETE("/", controllers.DeleteOrders)
+			thesis.GET("/:id", controllers.GetThesis)
+			thesis.POST("/", controllers.CreateThesis)
+			thesis.GET("/own/:teacher_id", controllers.GetOwnThesis)
+			thesis.DELETE("/:id", controllers.DeleteThesis)
+			thesis.PUT("/", controllers.UpdateThesis)
+		}
+
+		thesisOffice :=  main.Group("thesis-office")
+		{
+			thesisOffice.GET("/", controllers.GetAllthesis)
+			thesisOffice.PUT("/", controllers.UpdateReqThesis)
+		}
+
+		student := main.Group("student")
+		{
+			student.GET("/", controllers.GetStudentThesis)
 		}
 	}
 

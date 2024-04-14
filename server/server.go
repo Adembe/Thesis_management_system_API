@@ -3,9 +3,10 @@ package server
 import (
 	"log"
 
+	"go-rest-api/server/routes"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"go-rest-api/server/routes"
 )
 
 type Server struct {

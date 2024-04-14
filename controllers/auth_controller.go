@@ -7,6 +7,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+type AuthResp struct {
+    UserId  uint
+    Token string
+}
 
 func Login(c *gin.Context) {
 	db := database.GetDatabase()
@@ -25,6 +29,14 @@ func Login(c *gin.Context) {
 		utils.Respfailed("Нууц үг эсвэл мейл хаяг буруу байна !!! ", c, "no user")
 		return
 	}
-	token := "mytoken jwt"
-	utils.RespSuccess(token, "", c)
+
+	var resp AuthResp; 
+	resp.Token = "my token"
+	resp.UserId = userModel.ID
+	// b, err := json.Marshal(resp)
+    // if err != nil {
+    //     fmt.Println(err)
+    //     return
+    // }
+	utils.RespSuccess(resp, "", c)
 }
