@@ -6,11 +6,12 @@ import (
 
 type User struct {
 	ID          uint      `json:"id" gorm:"primaryKey"`
-	Fname        string    `json:"fname"`
-	Lname        string    `json:"lname"`
+	Fname       string    `json:"fname"`
+	Lname       string    `json:"lname"`
 	Email       string    `json:"email"`
 	Password    string    `json:"password"`
 	Type        uint      `json:"type"`
+	Programm    uint      `json:"programm"`
 	PhoneNumber *string   `json:"phone_number"`
 	Address     *string   `json:"address"`
 	CreatedAt   time.Time // Automatically managed by GORM for creation time
@@ -35,11 +36,8 @@ type ApplyThesis struct{
 	ID          uint           `json:"id" gorm:"primaryKey"`
 	Status		uint		   `json:"status"` 
 	ThesisId    uint           `json:"thesis_id"`
-	Thesis   	Thesis		   `gorm:"foreignKey:ThesisId"`
 	StudentId   uint		   `json:"student_id"` 
-	User   		User		   `gorm:"foreignKey:StudentId"`
-	TeacherId   uint           `json:"teacher_id"`
-	Thesis   	Thesis		   `gorm:"foreignKey:TeacherId"`
+	TeacherId   uint		   `json:"teacher_id"` 
 	CreatedAt   time.Time      
 	UpdatedAt   time.Time      
 }
@@ -47,8 +45,7 @@ type ApplyThesis struct{
 
 type Process struct {
 	ID            uint           `json:"id" gorm:"primaryKey"`
-	TeacherId     string		     `json:"teacher_id"`
-
+	TeacherId     string		 `json:"teacher_id"`
 	TeacherName   string         `json:"teacher_name"`
 	StudentId	  string         `json:"student_id"`
 	StudentName   string         `json:"student_name"`

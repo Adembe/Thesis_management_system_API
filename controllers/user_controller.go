@@ -30,7 +30,8 @@ func GetUser(c *gin.Context) {
 
 		return
 	}
-	c.JSON(200, User)
+
+	utils.RespSuccess(User, "", c)
 }
 
 func CreateUser(c *gin.Context) {
@@ -68,7 +69,7 @@ func GetAllUsers(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, p)
+	utils.RespSuccess(p, "", c)
 }
 
 func DeleteUser(c *gin.Context) {
@@ -84,18 +85,23 @@ func DeleteUser(c *gin.Context) {
 
 	db := database.GetDatabase()
 	err = db.Delete(&models.User{}, newid).Error
-
 	if err != nil {
-		c.JSON(400, gin.H{
-			"Error": "Error deleting the User: " + err.Error(),
-		})
+		utils.Respfailed("thesis үстгах үед алдаа гарлаа !!! ", c, err.Error())
 		return
 	}
 
-	c.Status(204)
+	var p []models.User
+	err = db.Find(&p).Error
+	if err != nil {
+		utils.Respfailed("Алдаа гарлаа: !!! ", c, err.Error())
+		return
+	}
+
+	utils.RespSuccess(p, "", c)
 }
 
 func UpdateUser(c *gin.Context) {
+	
 	db := database.GetDatabase()
 	var p models.User
 	err := c.ShouldBindJSON(&p)
@@ -116,5 +122,5 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, p)
+	utils.RespSuccess(p, "", c)
 }

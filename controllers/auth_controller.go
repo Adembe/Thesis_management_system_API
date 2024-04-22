@@ -10,6 +10,7 @@ import (
 type AuthResp struct {
     UserId  uint
     Token string
+	Type uint
 }
 
 func Login(c *gin.Context) {
@@ -33,6 +34,7 @@ func Login(c *gin.Context) {
 	var resp AuthResp; 
 	resp.Token = "my token"
 	resp.UserId = userModel.ID
+	resp.Type = userModel.Type
 	// b, err := json.Marshal(resp)
     // if err != nil {
     //     fmt.Println(err)

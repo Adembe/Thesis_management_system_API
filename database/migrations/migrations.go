@@ -9,5 +9,6 @@ import (
 func RunMigrations(db *gorm.DB) {
 	db.AutoMigrate(models.User{})
 	db.AutoMigrate(models.Thesis{})
-	// db.AutoMigrate(models.Process{})
+	db.AutoMigrate(models.Process{})
+	db.AutoMigrate(models.ApplyThesis{})
 }
