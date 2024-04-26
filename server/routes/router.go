@@ -41,6 +41,19 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 			student.PUT("/", controllers.StudentReqThesis)
 			student.GET("/:student_id", controllers.GetStudentShowReq)
 		}
+		process := main.Group("process")
+		{
+			process.PUT("/", controllers.InsertProcess)
+			process.GET("/all", controllers.GetProcessAll)
+			process.GET("/teacher:teacher_id", controllers.GetProcessTeacher)
+			process.GET("/student:student_id", controllers.GetProcessStudent)
+		}
+
+
+		ws := main.Group("/ws")
+        {
+            ws.GET("/", controllers.WShandler)
+        }
 	}
 
 	return router

@@ -144,7 +144,7 @@ func GetAllRequested(c *gin.Context) {
 		left join users usr on ath.student_id = usr.id
 	) a on th.id = a.thesis_id 
 	 
-	Where th.teacher_id = ?
+	Where th.status = 3 AND th.teacher_id = ?  
 	`
 	if err := db.Raw(query, newid).Scan(&thesisList).Error; err != nil {
 		fmt.Print("Query failed:", err)

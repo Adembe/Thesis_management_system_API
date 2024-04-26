@@ -17,13 +17,11 @@ type Server struct {
 func NewServer() Server {
 	server := gin.Default()
 
-	// Configure CORS middleware
 	config := cors.DefaultConfig()
-	config.AllowAllOrigins = true                                                               // This allows all origins
-	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}          // Specify HTTP methods allowed
-	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"} // Specify headers allowed
+	config.AllowAllOrigins = true                                                               
+	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}          
+	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"} 
 
-	// Apply CORS middleware to the server
 	server.Use(cors.New(config))
 
 	return Server{

@@ -43,20 +43,40 @@ type ApplyThesis struct{
 }
 
 
-type Process struct {
-	ID            uint           `json:"id" gorm:"primaryKey"`
-	TeacherId     string		 `json:"teacher_id"`
-	TeacherName   string         `json:"teacher_name"`
-	StudentId	  string         `json:"student_id"`
-	StudentName   string         `json:"student_name"`
-	BranchSchool  string		 `json:"branch_school"`
-	Chair         string		 `json:"chair"`
-	ThesisName    string		 `json:"thesis_name"`
-	Process1      string         `json:"process1"`
-	Process2      string         `json:"process2"`
-	Process3      string         `json:"process3"`
-	Process4      string         `json:"process4"`
-	CreatedAt     time.Time      `json:"created"`
-	UpdatedAt     time.Time      `json:"updated"`
+type NotificationThesis struct{
+	ID          uint           `json:"id" gorm:"primaryKey"` 
+	FromUser	uint			`json:"from_user"`
+	ToUser		uint			`json:"to_user"`
+	Type 		string 			`json:"type"`
+	ThesisId    uint			`json:"thesis_id"`
+	Thesis      Thesis 			`gorm:"foreignKey:ThesisId"`
+	CreatedAt   time.Time      
+	UpdatedAt   time.Time      
 }
 
+
+type Process struct {
+	ID            uint         `json:"id" gorm:"primaryKey"`
+	TeacherId     uint		   `json:"teacher_id"`
+	StudentId	  uint         `json:"student_id"`
+	ThesisId      uint		   `json:"thesis_id"`
+	Process1      uint         `json:"process1"`
+	Process2      uint         `json:"process2"`
+	Process3      uint         `json:"process3"`
+	Process4      uint         `json:"process4"`
+	ProcessStatus uint		   `json:"process_status"`
+	CreatedAt     time.Time    `json:"created"`
+	UpdatedAt     time.Time    `json:"updated"`
+}
+
+
+
+type ProcessDetail struct {
+	ID            uint         `json:"id" gorm:"primaryKey"`
+	ProcessId     uint		   `json:"process_id"`
+	Process	  	  Process      `gorm:"foreignKey:ProcessId"`
+	Feedback      string	   `json:"feedback"`
+	Status        uint	   	   `json:"status"`
+	CreatedAt     time.Time    `json:"created"`
+	UpdatedAt     time.Time    `json:"updated"`
+}
