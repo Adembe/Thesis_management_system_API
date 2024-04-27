@@ -1,12 +1,12 @@
 package controllers
 
 import (
-	"fmt"
 	"go-rest-api/database"
 	"go-rest-api/dto"
 	"go-rest-api/models"
 	"go-rest-api/utils"
 	"log"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -56,24 +56,27 @@ func InsertProcess(c *gin.Context) {
 }
 
 
-func GetProcessAll(c *gin.Context){
-	fmt.Printf("gsdgasdgahsgd",)
-	db := database.GetDatabase()
-	var p []dto.ProcessThesis
-	query := `
-		SELECT p.id,p.teacher_id,p.student_id, p.thesis_id,p.process1,p.process2,p.process3,p.process4,p.process_status ,ut.lname as teacher_name, us.lname as student_name, us.programm as student_programm,th.mgl_name as thesis_name FROM processes p
-		left join users ut on p.teacher_id = ut.id
-		left join users us on p.student_id = us.id
-		left join theses th on p.thesis_id = th.id
-	`
+func GetProcessAll(c *gin.Context) {
+    db := database.GetDatabase()
+    if db == nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "database connection is nil"})
+        return
+    }
+    var p []dto.ProcessThesis
+    query := `
+        SELECT p.id, p.teacher_id, p.student_id, p.thesis_id, p.process1, p.process2, p.process3, p.process4, p.process_status, ut.lname as teacher_name, us.lname as student_name, us.programm as student_programm, th.mgl_name as thesis_name FROM processes p
+        left join users ut on p.teacher_id = ut.id
+        left join users us on p.student_id = us.id
+        left join theses th on p.thesis_id = th.id
+    `
+    if err := db.Raw(query).Scan(&p).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
 
-	fmt.Printf("gsdgasdgahsgd %+v",p)
-	if err := db.Raw(query).Scan(&p).Error; err != nil {
-		log.Fatal("Query failed:", err)
-	}
-	
-	utils.RespSuccess(p, "", nil)
+    utils.RespSuccess(p, "", c)
 }
+
 
 func GetProcessTeacher(c *gin.Context){
 	db := database.GetDatabase()
@@ -111,7 +114,7 @@ func GetProcessStudent(c *gin.Context){
 		left join users ut on p.teacher_id = ut.id
 		left join users us on p.student_id = us.id
 		left join theses th on p.thesis_id = th.id
-		where p.teacher_id = ?
+		where p.student_id = ?
 	`
 	if err := db.Raw(query,newID).Scan(&p).Error; err != nil {
 		log.Fatal("Query failed:", err)
