@@ -75,8 +75,13 @@ type ProcessDetail struct {
 	ID            uint         `json:"id" gorm:"primaryKey"`
 	ProcessId     uint		   `json:"process_id"`
 	Process	  	  Process      `gorm:"foreignKey:ProcessId"`
+	TeacherID     uint		   `json:"teacher_id"`
+	StudentID     uint		   `json:"student_id"`
+	ThesisID     uint		   `json:"thesis_id"`
 	Feedback      string	   `json:"feedback"`
 	Status        uint	   	   `json:"status"`
+	Pdf_data      []byte    	`json:"pdf_detail"`
+	FileName      string 		`json:"file_name"`
 	CreatedAt     time.Time    `json:"created"`
 	UpdatedAt     time.Time    `json:"updated"`
 }

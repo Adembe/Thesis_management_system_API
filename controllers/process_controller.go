@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"fmt"
 	"go-rest-api/database"
 	"go-rest-api/dto"
 	"go-rest-api/models"
 	"go-rest-api/utils"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
@@ -104,6 +106,7 @@ func GetProcessStudent(c *gin.Context){
 	db := database.GetDatabase()
 	var p []dto.ProcessThesis
 	studentID := c.Param("student_id")
+	fmt.Print("student id : ",studentID)
     newID, err := strconv.Atoi(studentID)
     if err != nil {
         utils.Respfailed("Error converting student ID from string to integer: ", c, err.Error())
@@ -120,4 +123,95 @@ func GetProcessStudent(c *gin.Context){
 		log.Fatal("Query failed:", err)
 	}
 	utils.RespSuccess(p, "", c)
+}
+
+func InsertProcessDetail(c *gin.Context){
+	db := database.GetDatabase()
+
+	if err := c.Request.ParseMultipartForm(10 << 20); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "cannot parse form"})
+		return
+	}
+	processIdStr := c.Request.FormValue("processId")
+	processId, err := strconv.ParseUint(processIdStr , 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid thesis ID"})
+		return
+	}
+
+	// Read additional fields
+	thesisIdStr  := c.Request.FormValue("thesisId")
+	// Convert string to uint
+	thesisId, err := strconv.ParseUint(thesisIdStr , 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid thesis ID"})
+		return
+	}
+	studentIdStr := c.Request.FormValue("studentId")
+	studentId, err := strconv.ParseUint(studentIdStr , 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid thesis ID"})
+		return
+	}
+	fileNameStr := c.Request.FormValue("fileName")
+
+	teacherIdStr := c.Request.FormValue("teacherId")
+	teacherId, err := strconv.ParseUint(teacherIdStr , 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid thesis ID"})
+		return
+	}
+	file, _, err := c.Request.FormFile("pdf")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "upload file error"})
+		return
+	}
+	defer file.Close()
+
+	// Read file data into a byte slice
+	pdfData, err := ioutil.ReadAll(file)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to read file data"})
+		return
+	}
+
+
+	var prDetail models.ProcessDetail
+	prDetail.ProcessId = uint(processId)
+	prDetail.ThesisID = uint(thesisId)
+	prDetail.StudentID = uint(studentId)
+	prDetail.TeacherID = uint(teacherId)
+	prDetail.FileName = fileNameStr
+	prDetail.Pdf_data = pdfData
+
+
+	// Save to database
+	if err := db.Create(&prDetail).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save process detail"})
+		return
+	}
+	
+	utils.RespSuccess(nil, "", c)
+}
+
+func GetProcessDetail(c *gin.Context){
+	db := database.GetDatabase()
+	process_id := c.Param("process_id")
+
+
+	newid, err := strconv.Atoi(process_id)
+	if err != nil {
+		utils.Respfailed("Json хөрвүүлэх үед алдаа гарлаа !!! ", c, err.Error())
+		return
+	}
+
+	var processdetail []models.ProcessDetail
+	
+	err = db.Where("process_id = ?", newid).Find(&processdetail).Error
+	
+	if err != nil {
+		utils.Respfailed("processdetail авчрах үед алдаа гарлаа !!! ", c, err.Error())
+		return
+	}
+	utils.RespSuccess(processdetail, "", c)
 }
