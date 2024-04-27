@@ -36,7 +36,7 @@ func NewServer() Server {
 		readTimeout:  20 * time.Second,  // Adjust as necessary
         writeTimeout: 20 * time.Second,  // Adjust as necessary
         idleTimeout:  120 * time.Second,  // Adjust as necessary
-		maxHeaderBytes:  1 << 20, // Example: 1 MB
+		maxHeaderBytes:  2 << 20, // Example: 1 MB
 	}
 }
 

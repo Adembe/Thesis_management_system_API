@@ -169,7 +169,7 @@ func GetAllRequested(c *gin.Context) {
 		if userID != 0 {
 			err := db.Where("id = ?", userID).Find(&users).Error
 			if err != nil {
-				fmt.Print("Failed to fetch users: %v\n", err)
+				fmt.Printf("Failed to fetch users: %v\n", err)
 			}
 		}
 
