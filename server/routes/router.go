@@ -21,7 +21,7 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 			users.DELETE("/:id", controllers.DeleteUser)
 			users.PUT("/", controllers.UpdateUser)
 		}
-		thesis :=  main.Group("thesis")
+		thesis := main.Group("thesis")
 		{
 			thesis.GET("/:id", controllers.GetThesis)
 			thesis.POST("/", controllers.CreateThesis)
@@ -30,7 +30,7 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 			thesis.PUT("/", controllers.UpdateThesis)
 			thesis.GET("/allrequested/:teacher_id", controllers.GetAllRequested)
 		}
-		thesisOffice :=  main.Group("thesis-office")
+		thesisOffice := main.Group("thesis-office")
 		{
 			thesisOffice.GET("/", controllers.GetAllthesis)
 			thesisOffice.PUT("/", controllers.UpdateReqThesis)
@@ -46,7 +46,7 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 			process.POST("/", controllers.InsertProcess)
 			process.GET("/student/:student_id", controllers.GetProcessStudent)
 			process.POST("/detail", controllers.InsertProcessDetail)
-			process.GET("/detail/:process_id", controllers.GetProcessDetailStudent)
+			process.GET("/detail/:process_id", controllers.GetProcessDetail)
 			process.PUT("/student", controllers.UpdateFeedbackStudent)
 		}
 
@@ -60,9 +60,9 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 		}
 
 		ws := main.Group("/ws")
-        {
-            ws.GET("/", controllers.WShandler)
-        }
+		{
+			ws.GET("/", controllers.WShandler)
+		}
 	}
 
 	return router

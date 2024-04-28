@@ -7,10 +7,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
 type AuthResp struct {
-    UserId  uint
-    Token string
-	Type uint
+	UserId   uint
+	Token    string
+	Type     uint
+	UserName string
 }
 
 func Login(c *gin.Context) {
@@ -31,14 +33,15 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	var resp AuthResp; 
+	var resp AuthResp
 	resp.Token = "my token"
 	resp.UserId = userModel.ID
 	resp.Type = userModel.Type
+	resp.UserName = userModel.Fname
 	// b, err := json.Marshal(resp)
-    // if err != nil {
-    //     fmt.Println(err)
-    //     return
-    // }
+	// if err != nil {
+	//     fmt.Println(err)
+	//     return
+	// }
 	utils.RespSuccess(resp, "", c)
 }

@@ -13,6 +13,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
 func InsertProcess(c *gin.Context) {
 	db := database.GetDatabase()
 	var p dto.Process
@@ -24,17 +25,16 @@ func InsertProcess(c *gin.Context) {
 		return
 	}
 
-	err = db.Model(&models.Thesis{}).Where("id = ?", p.ThesisID).Update("status", p.Status).Error 
+	err = db.Model(&models.Thesis{}).Where("id = ?", p.ThesisID).Update("status", p.Status).Error
 	if err != nil {
-		utils.Respfailed("update query failed: " ,c,err.Error())
-        return
+		utils.Respfailed("update query failed: ", c, err.Error())
+		return
 	}
 
-
-	err = db.Model(&models.ApplyThesis{}).Where("thesis_id = ? AND student_id = ? AND teacher_id = ?", p.ThesisID, p.StudentID, p.TeacherID).Update("status", p.Status).Error 
+	err = db.Model(&models.ApplyThesis{}).Where("thesis_id = ? AND student_id = ? AND teacher_id = ?", p.ThesisID, p.StudentID, p.TeacherID).Update("status", p.Status).Error
 	if err != nil {
-		utils.Respfailed("update query failed: " ,c,err.Error())
-        return
+		utils.Respfailed("update query failed: ", c, err.Error())
+		return
 	}
 
 	var process models.Process
@@ -48,27 +48,24 @@ func InsertProcess(c *gin.Context) {
 	process.Process3 = 0
 	process.Process4 = 0
 
-
 	err = db.Save(&process).Error
 	if err != nil {
-		utils.Respfailed("Database query failed: " ,c,err.Error())
-        return
+		utils.Respfailed("Database query failed: ", c, err.Error())
+		return
 	}
 	utils.RespSuccess(nil, "", c)
 }
 
-
-
-func GetProcessStudent(c *gin.Context){
+func GetProcessStudent(c *gin.Context) {
 	db := database.GetDatabase()
 	var p []dto.ProcessThesis
 	studentID := c.Param("student_id")
-	fmt.Print("student id : ",studentID)
-    newID, err := strconv.Atoi(studentID)
-    if err != nil {
-        utils.Respfailed("Error converting student ID from string to integer: ", c, err.Error())
-        return
-    }
+	fmt.Print("student id : ", studentID)
+	newID, err := strconv.Atoi(studentID)
+	if err != nil {
+		utils.Respfailed("Error converting student ID from string to integer: ", c, err.Error())
+		return
+	}
 	query := `
 		SELECT p.id,p.teacher_id,p.student_id, p.thesis_id,p.process1,p.process2,p.process3,p.process4,p.process_status ,ut.lname as teacher_name, us.lname as student_name, us.programm as student_programm,th.mgl_name as thesis_name FROM processes p
 		left join users ut on p.teacher_id = ut.id
@@ -76,13 +73,14 @@ func GetProcessStudent(c *gin.Context){
 		left join theses th on p.thesis_id = th.id
 		where p.student_id = ?
 	`
-	if err := db.Raw(query,newID).Scan(&p).Error; err != nil {
+	if err := db.Raw(query, newID).Scan(&p).Error; err != nil {
 		log.Fatal("Query failed:", err)
 	}
 	utils.RespSuccess(p, "", c)
 }
 
-func InsertProcessDetail(c *gin.Context){
+func InsertProcessDetail(c *gin.Context) {
+	fmt.Print("-------------------------------1")
 	db := database.GetDatabase()
 
 	if err := c.Request.ParseMultipartForm(10 << 20); err != nil {
@@ -90,22 +88,22 @@ func InsertProcessDetail(c *gin.Context){
 		return
 	}
 	processIdStr := c.Request.FormValue("processId")
-	processId, err := strconv.ParseUint(processIdStr , 10, 64)
+	processId, err := strconv.ParseUint(processIdStr, 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid thesis ID"})
 		return
 	}
 
 	// Read additional fields
-	thesisIdStr  := c.Request.FormValue("thesisId")
+	thesisIdStr := c.Request.FormValue("thesisId")
 	// Convert string to uint
-	thesisId, err := strconv.ParseUint(thesisIdStr , 10, 64)
+	thesisId, err := strconv.ParseUint(thesisIdStr, 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid thesis ID"})
 		return
 	}
 	studentIdStr := c.Request.FormValue("studentId")
-	studentId, err := strconv.ParseUint(studentIdStr , 10, 64)
+	studentId, err := strconv.ParseUint(studentIdStr, 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid thesis ID"})
 		return
@@ -113,7 +111,7 @@ func InsertProcessDetail(c *gin.Context){
 	fileNameStr := c.Request.FormValue("fileName")
 
 	teacherIdStr := c.Request.FormValue("teacherId")
-	teacherId, err := strconv.ParseUint(teacherIdStr , 10, 64)
+	teacherId, err := strconv.ParseUint(teacherIdStr, 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid thesis ID"})
 		return
@@ -132,6 +130,7 @@ func InsertProcessDetail(c *gin.Context){
 		return
 	}
 
+	fmt.Print("-------------------------------2")
 
 	var prDetail models.ProcessDetail
 	prDetail.ProcessId = uint(processId)
@@ -141,20 +140,18 @@ func InsertProcessDetail(c *gin.Context){
 	prDetail.FileName = fileNameStr
 	prDetail.Pdf_data = pdfData
 
-
 	// Save to database
 	if err := db.Create(&prDetail).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save process detail"})
 		return
 	}
-	
+
 	utils.RespSuccess(nil, "", c)
 }
 
-func GetProcessDetailStudent(c *gin.Context){
+func GetProcessDetail(c *gin.Context) {
 	db := database.GetDatabase()
 	process_id := c.Param("process_id")
-
 
 	newid, err := strconv.Atoi(process_id)
 	if err != nil {
@@ -163,9 +160,9 @@ func GetProcessDetailStudent(c *gin.Context){
 	}
 
 	var processdetail []models.ProcessDetail
-	
+
 	err = db.Where("process_id = ?", newid).Find(&processdetail).Error
-	
+
 	if err != nil {
 		utils.Respfailed("processdetail авчрах үед алдаа гарлаа !!! ", c, err.Error())
 		return
@@ -173,11 +170,11 @@ func GetProcessDetailStudent(c *gin.Context){
 	utils.RespSuccess(processdetail, "", c)
 }
 
-func UpdateFeedbackStudent(c *gin.Context){
+func UpdateFeedbackStudent(c *gin.Context) {
 	db := database.GetDatabase()
 	var p models.ProcessDetail
 	err := c.ShouldBindJSON(&p)
-	fmt.Printf("ppppp %v",p)
+	fmt.Printf("ppppp %v", p)
 	if err != nil {
 		utils.Respfailed("Json хөрвүүлэх үед алдаа гарлаа !!! ", c, err.Error())
 		return
