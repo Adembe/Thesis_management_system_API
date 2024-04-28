@@ -173,7 +173,7 @@ func GetProcessDetail(c *gin.Context){
 	utils.RespSuccess(processdetail, "", c)
 }
 
-func UpdateFeedback(c *gin.Context){
+func UpdateFeedbackStudent(c *gin.Context){
 	db := database.GetDatabase()
 	var p models.ProcessDetail
 	err := c.ShouldBindJSON(&p)

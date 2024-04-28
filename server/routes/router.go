@@ -47,7 +47,7 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 			process.GET("/student/:student_id", controllers.GetProcessStudent)
 			process.POST("/detail", controllers.InsertProcessDetail)
 			process.GET("/detail/:process_id", controllers.GetProcessDetail)
-			process.PUT("/", controllers.UpdateFeedback)
+			process.PUT("/student", controllers.UpdateFeedbackStudent)
 		}
 
 		processTandS := main.Group("processTandS")
@@ -56,6 +56,7 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 			processTandS.GET("/teacher/:teacher_id", controllers.GetProcessTeacher)
 			processTandS.PUT("/", controllers.UpdateProcessOne)
 			processTandS.PUT("/all", controllers.UpdateProcessAll)
+			process.PUT("/feedback", controllers.UpdateFeedbackTeacher)
 		}
 
 		ws := main.Group("/ws")

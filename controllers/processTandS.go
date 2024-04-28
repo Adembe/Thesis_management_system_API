@@ -97,3 +97,22 @@ func UpdateProcessAll(c *gin.Context){
 	}
 	utils.RespSuccess(p, "", c)
 }
+
+func UpdateFeedbackTeacher(c *gin.Context){
+	db := database.GetDatabase()
+	var p models.ProcessDetail
+	err := c.ShouldBindJSON(&p)
+	fmt.Printf("ppppp %v",p)
+	if err != nil {
+		utils.Respfailed("Json хөрвүүлэх үед алдаа гарлаа !!! ", c, err.Error())
+		return
+	}
+
+	err = db.Model(&models.ProcessDetail{}).Where("id = ?", p.ID).Update("feedback", p.Feedback).Error
+
+	if err != nil {
+		utils.Respfailed("thesis хадгалах үед алдаа гарлаа !!! ", c, err.Error())
+		return
+	}
+	utils.RespSuccess(nil, "", c)
+}
