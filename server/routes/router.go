@@ -55,9 +55,8 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 			processTandS.GET("/", controllers.GetProcessAll)
 			processTandS.GET("/teacher/:teacher_id", controllers.GetProcessTeacher)
 			processTandS.PUT("/", controllers.UpdateProcessOne)
-			processTandS.PUT("/teacher", controllers.GetProcessDetailTeacher)
 			processTandS.PUT("/all", controllers.UpdateProcessAll)
-			process.PUT("/feedback", controllers.UpdateFeedbackTeacher)
+			processTandS.PUT("/teacher", controllers.UpdateFeedbackTeacher)
 		}
 
 		ws := main.Group("/ws")

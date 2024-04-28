@@ -116,26 +116,3 @@ func UpdateFeedbackTeacher(c *gin.Context){
 	}
 	utils.RespSuccess(nil, "", c)
 }
-
-
-func GetProcessDetailTeacher(c *gin.Context){
-	db := database.GetDatabase()
-	process_id := c.Param("process_id")
-
-
-	newid, err := strconv.Atoi(process_id)
-	if err != nil {
-		utils.Respfailed("Json хөрвүүлэх үед алдаа гарлаа !!! ", c, err.Error())
-		return
-	}
-
-	var processdetail []models.ProcessDetail
-	
-	err = db.Where("process_id = ?", newid).Find(&processdetail).Error
-	
-	if err != nil {
-		utils.Respfailed("processdetail авчрах үед алдаа гарлаа !!! ", c, err.Error())
-		return
-	}
-	utils.RespSuccess(processdetail, "", c)
-}
