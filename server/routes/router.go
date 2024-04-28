@@ -16,7 +16,7 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 		users := main.Group("/users")
 		{
 			users.GET("/:id", controllers.GetUser)
-			users.GET("/", controllers.GetAllUsers)
+			users.GET("", controllers.GetAllUsers)
 			users.POST("/", controllers.CreateUser)
 			users.DELETE("/:id", controllers.DeleteUser)
 			users.PUT("/", controllers.UpdateUser)
@@ -59,10 +59,10 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 			processTandS.PUT("/teacher", controllers.UpdateFeedbackTeacher)
 		}
 
-		ws := main.Group("/ws")
-		{
-			ws.GET("/", controllers.WShandler)
-		}
+		// ws := main.Group("/ws")
+		// {
+		// 	ws.GET("/", controllers.WShandler)
+		// }
 	}
 
 	return router
