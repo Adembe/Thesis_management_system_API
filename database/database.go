@@ -15,8 +15,8 @@ import (
 var db *gorm.DB
 
 func StartDatabase() {
-	str := "host=localhost port=5432 user=postgres dbname=thesis_db sslmode=disable password=123"
-	// str := "postgres://thesis_db_twk5_user:A5LHBU1nVTWlwsSGR2Lk5XG9RCU0Hcyp@dpg-con3rssf7o1s73fd1ka0-a.singapore-postgres.render.com/thesis_db_twk5"
+	// str := "host=localhost port=5432 user=postgres dbname=thesis_db sslmode=disable password=123"
+	str := "postgres://thesis_db_twk5_user:A5LHBU1nVTWlwsSGR2Lk5XG9RCU0Hcyp@dpg-con3rssf7o1s73fd1ka0-a.singapore-postgres.render.com/thesis_db_twk5"
 
 	database, err := gorm.Open(postgres.Open(str), &gorm.Config{})
 
