@@ -32,7 +32,7 @@ func GetThesis(c *gin.Context) {
 
 func CreateThesis(c *gin.Context) {
 	db := database.GetDatabase()
-	
+
 	var p models.Thesis
 
 	err := c.ShouldBindJSON(&p)
@@ -40,13 +40,13 @@ func CreateThesis(c *gin.Context) {
 		utils.Respfailed("Json хөрвүүлэх үед алдаа гарлаа !!! ", c, err.Error())
 		return
 	}
-	fmt.Printf("%v",p)
+	fmt.Printf("%v", p)
 	err = db.Create(&p).Error
 	if err != nil {
 		utils.Respfailed("Thesis үед алдаа гарлаа !!! ", c, err.Error())
 		return
 	}
-	utils.RespSuccess(nil, "", c)
+	utils.RespSuccess(p, "", c)
 }
 
 func GetOwnThesis(c *gin.Context) {
@@ -59,16 +59,15 @@ func GetOwnThesis(c *gin.Context) {
 	}
 
 	var thesis []models.Thesis
-	
+
 	err = db.Where("teacher_id = ?", newid).Find(&thesis).Error
-	
+
 	if err != nil {
 		utils.Respfailed("thesis авчрах үед алдаа гарлаа !!! ", c, err.Error())
 		return
 	}
 	utils.RespSuccess(thesis, "", c)
 }
-
 
 func DeleteThesis(c *gin.Context) {
 	id := c.Param("id")
@@ -122,7 +121,6 @@ func UpdateThesis(c *gin.Context) {
 	utils.RespSuccess(rows, "", c)
 }
 
-
 func GetAllRequested(c *gin.Context) {
 	db := database.GetDatabase()
 	teacher_id := c.Param("teacher_id")
@@ -137,22 +135,14 @@ func GetAllRequested(c *gin.Context) {
 
 	query := `
 	select * from theses th 
-	left join (
-		select ath.thesis_id,
-			usr.id as user_id
-		from apply_theses ath
-		left join users usr on ath.student_id = usr.id
-	) a on th.id = a.thesis_id 
-	 
-	Where th.status = 3 AND th.teacher_id = ?  
+	Where th.status = 2 AND th.teacher_id = ?  
 	`
 	if err := db.Raw(query, newid).Scan(&thesisList).Error; err != nil {
 		fmt.Print("Query failed:", err)
 	}
 
-	
 	for _, thesis := range thesisList {
-		
+
 		// Extract fields from the map using type assertions
 		id, _ := thesis["id"].(int64)
 		status, _ := thesis["status"].(int64)
@@ -161,36 +151,35 @@ func GetAllRequested(c *gin.Context) {
 		engName, _ := thesis["eng_name"].(string)
 		content, _ := thesis["content"].(string)
 		requirement, _ := thesis["requirement"].(string)
-		userID, _ := thesis["user_id"].(int64)
 
-
-		fmt.Println("id:",userID)
+		var applyThesisList []models.ApplyThesis
+		err := db.Where("thesis_id = ?", id).Find(&applyThesisList).Error
+		if err != nil {
+			fmt.Print("Failed to fetch users:", err)
+		}
+		var ids []int
+		for _, appthesis := range applyThesisList {
+			ids = append(ids, int(appthesis.StudentId))
+		}
+		fmt.Printf("%+v", ids)
 		var users []models.User
-		if userID != 0 {
-			err := db.Where("id = ?", userID).Find(&users).Error
-			if err != nil {
-				fmt.Printf("Failed to fetch users: %v\n", err)
-			}
+		err = db.Where("id in ?", ids).Find(&users).Error
+		if err != nil {
+			fmt.Print("Failed to fetch users:", err)
 		}
 
 		requestedThesis := dto.AllRequestedThesis{
-			ID:             uint(id),
-			Status:         uint(status),
-			TeacherID:      uint(teacherID),
-			MglName:        mglName,
-			EngName:        engName,
-			Content:        content,
-			Requirement:    requirement,
+			ID:              uint(id),
+			Status:          uint(status),
+			TeacherID:       uint(teacherID),
+			MglName:         mglName,
+			EngName:         engName,
+			Content:         content,
+			Requirement:     requirement,
 			AppliedStudents: users,
 		}
 
 		allRequestedThesis = append(allRequestedThesis, requestedThesis)
-	}
-
-	
-	if err != nil {
-		utils.Respfailed("thesis авчрах үед алдаа гарлаа !!! ", c, err.Error())
-		return
 	}
 	utils.RespSuccess(allRequestedThesis, "", c)
 }
