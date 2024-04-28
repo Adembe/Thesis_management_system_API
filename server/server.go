@@ -3,6 +3,7 @@ package server
 import (
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"go-rest-api/server/routes"
@@ -29,9 +30,13 @@ func NewServer() Server {
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 
 	server.Use(cors.New(config))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "5000"
+	}
 
 	return Server{
-		port:           "5000",
+		port:           port,
 		server:         server,
 		readTimeout:    50 * time.Second,  // Adjust as necessary
 		writeTimeout:   50 * time.Second,  // Adjust as necessary
@@ -44,7 +49,7 @@ func (s *Server) Run() {
 	router := routes.ConfigRoutes(s.server)
 
 	httpServer := &http.Server{
-		Addr:           ":" + s.port, // Set the address and the port
+		Addr:           "0.0.0.0:" + s.port, // Set the address and the port
 		Handler:        router,       // Use the Gin router as the handler
 		ReadTimeout:    s.readTimeout,
 		WriteTimeout:   s.writeTimeout,
