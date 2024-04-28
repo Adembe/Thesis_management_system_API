@@ -151,7 +151,7 @@ func InsertProcessDetail(c *gin.Context){
 	utils.RespSuccess(nil, "", c)
 }
 
-func GetProcessDetail(c *gin.Context){
+func GetProcessDetailStudent(c *gin.Context){
 	db := database.GetDatabase()
 	process_id := c.Param("process_id")
 
