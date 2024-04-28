@@ -13,10 +13,10 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 		{
 			login.POST("/login", controllers.Login)
 		}
-		users := main.Group("/users/")
+		users := main.Group("/users")
 		{
 			users.GET("/:id", controllers.GetUser)
-			users.GET("", controllers.GetAllUsers)
+			users.GET("/", controllers.GetAllUsers)
 			users.POST("/", controllers.CreateUser)
 			users.DELETE("/:id", controllers.DeleteUser)
 			users.PUT("/", controllers.UpdateUser)
