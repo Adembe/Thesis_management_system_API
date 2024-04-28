@@ -25,6 +25,11 @@ func InsertProcess(c *gin.Context) {
 		return
 	}
 
+	err = db.Where("student_id = ?", p.StudentID).Delete(&models.ApplyThesis{}).Error
+	if err != nil {
+		utils.Respfailed("update query failed: ", c, err.Error())
+		return
+	}
 	err = db.Model(&models.Thesis{}).Where("id = ?", p.ThesisID).Update("status", p.Status).Error
 	if err != nil {
 		utils.Respfailed("update query failed: ", c, err.Error())

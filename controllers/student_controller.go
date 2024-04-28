@@ -43,6 +43,19 @@ func StudentReqThesis(c *gin.Context) {
 		return
 	}
 
+    var student []models.ApplyThesis
+    err = db.Where("student_id = ? and thesis_id = ? and teacher_id = ?",p.StudentId,p.ThesisId,p.TeacherId).Find(&student).Error
+    if err != nil {
+		c.JSON(400, gin.H{
+			"Error": "Error saving the User: " + err.Error(),
+		})
+		return
+	}
+    if len(student) > 0 {
+        utils.Respfailed("Хүсэлт илгээсэн байна: " ,c,"")
+        return
+    }
+
 	err = db.Save(&p).Error
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -50,7 +63,7 @@ func StudentReqThesis(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(200, p)
+	utils.RespSuccess(p,"",c)
 }
 
 func GetStudentShowReq(c *gin.Context) {
