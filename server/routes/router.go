@@ -7,13 +7,13 @@ import (
 )
 
 func ConfigRoutes(router *gin.Engine) *gin.Engine {
-	main := router.Group("api/v1")
+	main := router.Group("/api/v1")
 	{
 		login := main.Group("auth")
 		{
 			login.POST("/login", controllers.Login)
 		}
-		users := main.Group("users")
+		users := main.Group("/users")
 		{
 			users.GET("/:id", controllers.GetUser)
 			users.GET("/", controllers.GetAllUsers)
@@ -21,7 +21,7 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 			users.DELETE("/:id", controllers.DeleteUser)
 			users.PUT("/", controllers.UpdateUser)
 		}
-		thesis := main.Group("thesis")
+		thesis := main.Group("/thesis")
 		{
 			thesis.GET("/:id", controllers.GetThesis)
 			thesis.POST("/", controllers.CreateThesis)
@@ -30,18 +30,18 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 			thesis.PUT("/", controllers.UpdateThesis)
 			thesis.GET("/allrequested/:teacher_id", controllers.GetAllRequested)
 		}
-		thesisOffice := main.Group("thesis-office")
+		thesisOffice := main.Group("/thesis-office")
 		{
 			thesisOffice.GET("/", controllers.GetAllthesis)
 			thesisOffice.PUT("/", controllers.UpdateReqThesis)
 		}
-		student := main.Group("student")
+		student := main.Group("/student")
 		{
 			student.GET("/", controllers.GetStudentThesis)
 			student.PUT("/", controllers.StudentReqThesis)
 			student.GET("/:student_id", controllers.GetStudentShowReq)
 		}
-		process := main.Group("process")
+		process := main.Group("/process")
 		{
 			process.POST("/", controllers.InsertProcess)
 			process.GET("/student/:student_id", controllers.GetProcessStudent)
@@ -50,7 +50,7 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 			process.PUT("/student", controllers.UpdateFeedbackStudent)
 		}
 
-		processTandS := main.Group("processTandS")
+		processTandS := main.Group("/processTandS")
 		{
 			processTandS.GET("/", controllers.GetProcessAll)
 			processTandS.GET("/teacher/:teacher_id", controllers.GetProcessTeacher)
