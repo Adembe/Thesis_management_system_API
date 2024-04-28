@@ -77,3 +77,23 @@ func UpdateProcessOne(c *gin.Context){
 	}
 	utils.RespSuccess(p, "", c)
 }
+
+
+func UpdateProcessAll(c *gin.Context){
+	db := database.GetDatabase()
+	var p models.Process
+	err := c.ShouldBindJSON(&p)
+	fmt.Printf("ppppp %v",p)
+	if err != nil {
+		utils.Respfailed("Json хөрвүүлэх үед алдаа гарлаа !!! ", c, err.Error())
+		return
+	}
+	err = db.Model(&models.Process{}).Where("id = ?", p.ID).Updates(models.Process{Process2: p.Process2, Process3: p.Process3, Process4: p.Process4}).Error
+
+
+	if err != nil {
+		utils.Respfailed("thesis хадгалах үед алдаа гарлаа !!! ", c, err.Error())
+		return
+	}
+	utils.RespSuccess(p, "", c)
+}
