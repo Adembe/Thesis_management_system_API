@@ -45,7 +45,7 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 		{
 			process.POST("", controllers.InsertProcess)
 			process.GET("student/:student_id", controllers.GetProcessStudent)
-			process.POST("detail", controllers.InsertProcessDetail)
+			process.POST("/detail", controllers.InsertProcessDetail)
 			process.GET("detail/:process_id", controllers.GetProcessDetail)
 			process.PUT("student", controllers.UpdateFeedbackStudent)
 		}
