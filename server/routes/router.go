@@ -7,6 +7,8 @@ import (
 )
 
 func ConfigRoutes(router *gin.Engine) *gin.Engine {
+
+	//comment
 	main := router.Group("/api/v1")
 	{
 		login := main.Group("auth")
