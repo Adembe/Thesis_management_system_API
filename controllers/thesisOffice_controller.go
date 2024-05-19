@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"log"
-
 	"go-rest-api/database"
 	"go-rest-api/dto"
 	"go-rest-api/models"
@@ -14,21 +12,41 @@ import (
 func GetAllthesis(c *gin.Context) {
 	db := database.GetDatabase()
 	var p []dto.AllThesis
+	var err error;
+    code := c.Param("code")
 	query := `
-SELECT th.id, th.status, th.teacher_id, th.mgl_name, th.eng_name, th.content, th.requirement,
-       us.fname, us.lname, us.email, us.phone_number, us.address
-FROM theses th
-LEFT JOIN users us ON th.teacher_id = us.id
-`
-if err := db.Raw(query).Scan(&p).Error; err != nil {
-	log.Fatal("Query failed:", err)
-}
-	// err := db.Raw("SELECT th.id, th.status, th.teacher_id, th.mgl_name, th.eng_name, th.content, th.requirement, us.fname, us.lname, us.email, us.phone_number, us.address FROM theses th left join users us on  th.id = us.id").Scan(&p).Error
-	// fmt.Printf("%v", p)
-	// if err != nil {
-	// 	utils.Respfailed("бүх thesis авах үед алдаа гарлаа !!! ", c, err.Error())
-	// 	return
-	// }
+	SELECT th.id, th.status, th.teacher_id, th.mgl_name, th.eng_name, th.content, th.requirement,
+		   us.fname, us.lname, us.email, us.phone_number, us.address
+	FROM theses th
+	LEFT JOIN users us ON th.teacher_id = us.id 
+	`
+	queryA := `
+	SELECT th.id, th.status, th.teacher_id, th.mgl_name, th.eng_name, th.content, th.requirement,
+		   us.fname, us.lname, us.email, us.phone_number, us.address
+	FROM theses th
+	LEFT JOIN users us ON th.teacher_id = us.id 
+	Where to_date(exfired, 'YYYY-MM-DD') <= to_date('2023-12-31', 'YYYY-MM-DD')
+	`
+	queryS := `
+	SELECT th.id, th.status, th.teacher_id, th.mgl_name, th.eng_name, th.content, th.requirement,
+		   us.fname, us.lname, us.email, us.phone_number, us.address
+	FROM theses th
+	LEFT JOIN users us ON th.teacher_id = us.id 
+	Where to_date(exfired, 'YYYY-MM-DD') < to_date('2024-06-02', 'YYYY-MM-DD') and to_date(exfired, 'YYYY-MM-DD') > to_date('2023-12-31', 'YYYY-MM-DD')
+	`
+	if(code == "null"){
+		err = db.Raw(query).Find(&p).Error
+	}
+	if(code == "1"){
+		err = db.Raw(queryS).Find(&p).Error
+	}
+	if(code == "0"){
+		err = db.Raw(queryA).Find(&p).Error
+	}
+	if err != nil {
+		utils.Respfailed("thesis авчрах үед алдаа гарлаа !!! ", c, err.Error())
+		return
+	}
 	utils.RespSuccess(p, "", c)
 }
 

@@ -27,14 +27,14 @@ func ConfigRoutes(router *gin.Engine) *gin.Engine {
 		{
 			thesis.GET(":id", controllers.GetThesis)
 			thesis.POST("", controllers.CreateThesis)
-			thesis.GET("own/:teacher_id", controllers.GetOwnThesis)
+			thesis.GET("own/:teacher_id/seasonCode/:code", controllers.GetOwnThesis)
 			thesis.DELETE(":id", controllers.DeleteThesis)
 			thesis.PUT("", controllers.UpdateThesis)
 			thesis.GET("allrequested/:teacher_id", controllers.GetAllRequested)
 		}
 		thesisOffice := main.Group("/thesis-office")
 		{
-			thesisOffice.GET("", controllers.GetAllthesis)
+			thesisOffice.GET("/:code", controllers.GetAllthesis)
 			thesisOffice.PUT("", controllers.UpdateReqThesis)
 		}
 		student := main.Group("/student")

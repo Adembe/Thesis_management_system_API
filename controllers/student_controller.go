@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
 
 	"go-rest-api/database"
 	"go-rest-api/dto"
@@ -16,17 +17,19 @@ import (
 func GetStudentThesis(c *gin.Context) {
 	db := database.GetDatabase()
 	var p []dto.AllThesis
+    var currentTime = time.Now();
+    fmt.Printf("current %s\n", currentTime)
 	query := `
-SELECT th.id, th.status, th.teacher_id, th.mgl_name, th.eng_name, th.content, th.requirement,
-       us.fname, us.lname, us.email, us.phone_number, us.address
-FROM theses th
-LEFT JOIN users us ON th.teacher_id = us.id 
-WHERE th.status = 2
-`
-if err := db.Raw(query).Scan(&p).Error; err != nil {
-	log.Fatal("Query failed:", err)
-}
-	utils.RespSuccess(p, "", c)
+    SELECT th.id, th.status, th.teacher_id, th.mgl_name, th.eng_name, th.content, th.requirement,
+        us.fname, us.lname, us.email, us.phone_number, us.address
+    FROM theses th
+    LEFT JOIN users us ON th.teacher_id = us.id 
+    WHERE th.status = 2 and to_date(th.exfired, 'YYYY-MM-DD') > to_date(?, 'YYYY-MM-DD')
+    `
+    if err := db.Raw(query,currentTime).Scan(&p).Error; err != nil {
+        log.Fatal("Query failed:", err)
+    }
+        utils.RespSuccess(p, "", c)
 }
 
 

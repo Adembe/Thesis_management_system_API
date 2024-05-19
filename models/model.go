@@ -27,6 +27,7 @@ type Thesis struct {
 	EngName		string		   `json:"eng_name"`
 	Content     string         `json:"content"`
 	Requirement string         `json:"requirement"`
+	Exfired     string 	   
 	CreatedAt   time.Time      
 	UpdatedAt   time.Time      
 }

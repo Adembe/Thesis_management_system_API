@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"go-rest-api/database"
 	"go-rest-api/dto"
@@ -34,16 +35,22 @@ func CreateThesis(c *gin.Context) {
 	db := database.GetDatabase()
 
 	var p models.Thesis
-
+	
 	err := c.ShouldBindJSON(&p)
 	if err != nil {
 		utils.Respfailed("Json хөрвүүлэх үед алдаа гарлаа !!! ", c, err.Error())
 		return
 	}
 	fmt.Printf("%v", p)
+	if p.Exfired == "0" {
+		p.Exfired = "2023-12-31 23:59:00"
+	} else if p.Exfired == "1" {
+		p.Exfired = "2024-06-01 23:59:00"
+	}
+	
 	err = db.Create(&p).Error
 	if err != nil {
-		utils.Respfailed("Thesis үед алдаа гарлаа !!! ", c, err.Error())
+		utils.Respfailed("Thesis үүсгэх үед алдаа гарлаа !!! ", c, err.Error())
 		return
 	}
 	utils.RespSuccess(p, "", c)
@@ -58,9 +65,20 @@ func GetOwnThesis(c *gin.Context) {
 		return
 	}
 
+	code := c.Param("code")
+	fmt.Printf("code %s",code)
 	var thesis []models.Thesis
+	var currentTime = time.Now();
 
-	err = db.Where("teacher_id = ?", newid).Find(&thesis).Error
+	if(code == "null"){
+		err = db.Where("teacher_id = ? AND to_date(exfired, 'YYYY-MM-DD') > ?", newid, currentTime).Find(&thesis).Error
+	}
+	if(code == "1"){
+		err = db.Where("teacher_id = ? AND to_date(exfired, 'YYYY-MM-DD') < to_date('2024-06-02', 'YYYY-MM-DD') and to_date(exfired, 'YYYY-MM-DD') > to_date('2023-12-31', 'YYYY-MM-DD')", newid).Find(&thesis).Error
+	}
+	if(code == "0"){
+		err = db.Where("teacher_id = ? AND to_date(exfired, 'YYYY-MM-DD') <= to_date('2023-12-31', 'YYYY-MM-DD')", newid).Find(&thesis).Error
+	}
 
 	if err != nil {
 		utils.Respfailed("thesis авчрах үед алдаа гарлаа !!! ", c, err.Error())
