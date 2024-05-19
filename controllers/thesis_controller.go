@@ -55,36 +55,40 @@ func CreateThesis(c *gin.Context) {
 	}
 	utils.RespSuccess(p, "", c)
 }
-
 func GetOwnThesis(c *gin.Context) {
-	db := database.GetDatabase()
-	teacher_id := c.Param("teacher_id")
-	newid, err := strconv.Atoi(teacher_id)
-	if err != nil {
-		utils.Respfailed("Json хөрвүүлэх үед алдаа гарлаа !!! ", c, err.Error())
-		return
-	}
+    db := database.GetDatabase()
+    teacher_id := c.Param("teacher_id")
+    newid, err := strconv.Atoi(teacher_id)
+    if err != nil {
+        utils.Respfailed("Json хөрвүүлэх үед алдаа гарлаа !!! ", c, err.Error())
+        return
+    }
 
-	code := c.Param("code")
-	fmt.Printf("code %s",code)
-	var thesis []models.Thesis
-	var currentTime = time.Now();
+    code := c.Param("code")
+    fmt.Printf("code %s", code)
+    var thesis []models.Thesis
+    currentTime := time.Now()
 
-	if(code == "null"){
-		err = db.Where("teacher_id = ? AND to_date(exfired, 'YYYY-MM-DD') > ?", newid, currentTime).Find(&thesis).Error
-	}
-	if(code == "1"){
-		err = db.Where("teacher_id = ? AND to_date(exfired, 'YYYY-MM-DD') < to_date('2024-06-02', 'YYYY-MM-DD') and to_date(exfired, 'YYYY-MM-DD') > to_date('2023-12-31', 'YYYY-MM-DD')", newid).Find(&thesis).Error
-	}
-	if(code == "0"){
-		err = db.Where("teacher_id = ? AND to_date(exfired, 'YYYY-MM-DD') <= to_date('2023-12-31', 'YYYY-MM-DD')", newid).Find(&thesis).Error
-	}
+    switch code {
+    case "null":
+        err = db.Where("teacher_id = ? AND exfired > ?", newid, currentTime).Find(&thesis).Error
+    case "1":
+        startDate, _ := time.Parse("2006-01-02", "2024-01-01")
+        endDate, _ := time.Parse("2006-01-02", "2024-06-02")
+        err = db.Where("teacher_id = ? AND exfired BETWEEN ? AND ?", newid, startDate, endDate).Find(&thesis).Error
+    case "0":
+        endDate, _ := time.Parse("2006-01-02", "2023-12-31")
+        err = db.Where("teacher_id = ? AND exfired <= ?", newid, endDate).Find(&thesis).Error
+    default:
+        utils.Respfailed("Invalid code provided", c, "Invalid code")
+        return
+    }
 
-	if err != nil {
-		utils.Respfailed("thesis авчрах үед алдаа гарлаа !!! ", c, err.Error())
-		return
-	}
-	utils.RespSuccess(thesis, "", c)
+    if err != nil {
+        utils.Respfailed("thesis авчрах үед алдаа гарлаа !!! ", c, err.Error())
+        return
+    }
+    utils.RespSuccess(thesis, "", c)
 }
 
 func DeleteThesis(c *gin.Context) {

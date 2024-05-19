@@ -24,7 +24,7 @@ func GetStudentThesis(c *gin.Context) {
         us.fname, us.lname, us.email, us.phone_number, us.address
     FROM theses th
     LEFT JOIN users us ON th.teacher_id = us.id 
-    WHERE th.status = 2 and to_date(th.exfired, 'YYYY-MM-DD') > to_date(?, 'YYYY-MM-DD')
+    WHERE th.status = 2 and to_timestamp(th.exfired, 'YYYY-MM-DD') > to_timestamp(?, 'YYYY-MM-DD')
     `
     if err := db.Raw(query,currentTime).Scan(&p).Error; err != nil {
         log.Fatal("Query failed:", err)

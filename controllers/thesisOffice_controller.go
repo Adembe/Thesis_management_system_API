@@ -25,14 +25,14 @@ func GetAllthesis(c *gin.Context) {
 		   us.fname, us.lname, us.email, us.phone_number, us.address
 	FROM theses th
 	LEFT JOIN users us ON th.teacher_id = us.id 
-	Where to_date(exfired, 'YYYY-MM-DD') <= to_date('2023-12-31', 'YYYY-MM-DD')
+	Where to_timestamp(exfired, 'YYYY-MM-DD') <= to_timestamp('2023-12-31', 'YYYY-MM-DD')
 	`
 	queryS := `
 	SELECT th.id, th.status, th.teacher_id, th.mgl_name, th.eng_name, th.content, th.requirement,
 		   us.fname, us.lname, us.email, us.phone_number, us.address
 	FROM theses th
 	LEFT JOIN users us ON th.teacher_id = us.id 
-	Where to_date(exfired, 'YYYY-MM-DD') < to_date('2024-06-02', 'YYYY-MM-DD') and to_date(exfired, 'YYYY-MM-DD') > to_date('2023-12-31', 'YYYY-MM-DD')
+	Where to_timestamp(exfired, 'YYYY-MM-DD') < to_timestamp('2024-06-02', 'YYYY-MM-DD') and to_timestamp(exfired, 'YYYY-MM-DD') > to_timestamp('2023-12-31', 'YYYY-MM-DD')
 	`
 	if(code == "null"){
 		err = db.Raw(query).Find(&p).Error
