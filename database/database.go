@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"go-rest-api/database/migrations"
-	"go-rest-api/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -28,19 +27,27 @@ func StartDatabase() {
 	db = database
 
 
-	var p models.User
+	
+	// query := `TRUNCATE TABLE theses, apply_theses, process_details, processes CASCADE`
+	// err = db.Exec(query).Error
+	// if err != nil {
+	// 	fmt.Print(err)
+	// }
 
-	p.Email = "admin@gmail.com"
-	p.Password = "123"
-	p.Fname = "admin"
-	p.Type = 1
-	p.Programm = 0
-	p.Lname = "admin"
 
-	err = db.Create(&p).Error
-	if err != nil {
-		fmt.Print(err)
-	}
+	// var p models.User
+
+	// // p.Email = "admin@gmail.com"
+	// // p.Password = "123"
+	// // p.Fname = "admin"
+	// // p.Type = 1
+	// // p.Programm = 0
+	// // p.Lname = "admin"
+
+	// err = db.Create(&p).Error
+	// if err != nil {
+	// 	fmt.Print(err)
+	// }
 
 
 	config, _ := db.DB()

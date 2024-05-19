@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 	"time"
 
@@ -17,20 +16,24 @@ import (
 func GetStudentThesis(c *gin.Context) {
 	db := database.GetDatabase()
 	var p []dto.AllThesis
-    var currentTime = time.Now();
-    fmt.Printf("current %s\n", currentTime)
+	currentTime := time.Now().Format("2006-01-02") // Format current time as a date string
+	fmt.Printf("current %s\n", currentTime)
+	
 	query := `
-    SELECT th.id, th.status, th.teacher_id, th.mgl_name, th.eng_name, th.content, th.requirement,
-        us.fname, us.lname, us.email, us.phone_number, us.address
-    FROM theses th
-    LEFT JOIN users us ON th.teacher_id = us.id 
-    WHERE th.status = 2 and to_timestamp(th.exfired, 'YYYY-MM-DD') > to_timestamp(?, 'YYYY-MM-DD')
-    `
-    if err := db.Raw(query,currentTime).Scan(&p).Error; err != nil {
-        log.Fatal("Query failed:", err)
-    }
-        utils.RespSuccess(p, "", c)
+	SELECT th.id, th.status, th.teacher_id, th.mgl_name, th.eng_name, th.content, th.requirement,
+		us.fname, us.lname, us.email, us.phone_number, us.address
+	FROM theses th
+	LEFT JOIN users us ON th.teacher_id = us.id 
+	WHERE th.status = 2 and th.exfired > '2024-01-01'
+	`
+	
+	if err := db.Raw(query).Scan(&p).Error; err != nil {
+		utils.Respfailed("Query failed:", c, err.Error())
+		return
+	}
+	utils.RespSuccess(p, "", c)
 }
+
 
 
 

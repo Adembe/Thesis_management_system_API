@@ -43,7 +43,7 @@ func CreateThesis(c *gin.Context) {
 	}
 	fmt.Printf("%v", p)
 	if p.Exfired == "0" {
-		p.Exfired = "2023-12-31 23:59:00"
+		p.Exfired = "2023-12-30"
 	} else if p.Exfired == "1" {
 		p.Exfired = "2024-06-01 23:59:00"
 	}
@@ -67,17 +67,17 @@ func GetOwnThesis(c *gin.Context) {
     code := c.Param("code")
     fmt.Printf("code %s", code)
     var thesis []models.Thesis
-    currentTime := time.Now()
 
     switch code {
     case "null":
-        err = db.Where("teacher_id = ? AND exfired > ?", newid, currentTime).Find(&thesis).Error
+        err = db.Where("teacher_id = ?", newid).Find(&thesis).Error
     case "1":
         startDate, _ := time.Parse("2006-01-02", "2024-01-01")
         endDate, _ := time.Parse("2006-01-02", "2024-06-02")
         err = db.Where("teacher_id = ? AND exfired BETWEEN ? AND ?", newid, startDate, endDate).Find(&thesis).Error
     case "0":
         endDate, _ := time.Parse("2006-01-02", "2023-12-31")
+		fmt.Printf("time %s", endDate)
         err = db.Where("teacher_id = ? AND exfired <= ?", newid, endDate).Find(&thesis).Error
     default:
         utils.Respfailed("Invalid code provided", c, "Invalid code")
